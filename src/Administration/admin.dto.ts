@@ -1,22 +1,45 @@
-import { IsString, IsBoolean, Matches, IsOptional } from 'class-validator';
+import { IsString, IsBoolean, IsEmail, Matches, IsOptional, MinLength } from 'class-validator';
 
 export class AdminDTO {
-    // @IsString()
-    fullName: string;
+    @IsString()
+    @MinLength(4)
+    name: string;
 
     @IsString()
-    @Matches(/^[0-9]{1,11}$/,{message: 'Phone number must be a string of at most 11 digits'})
+    @IsEmail({}, { message: 'Invalid Email Format' })
+    email: string;
+
+    @IsString()
+    @MinLength(4)
+    password: string;
+
+    @IsString()
+    @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
     phone: string;
 
     @IsBoolean()
     @IsOptional()
     isActive: boolean;
-  id: any;
 }
 
 export class AdminUpdateDTO {
-    @IsString()
-    @Matches(/^[0-9]{1,11}$/,{message: 'Phone number must be a string of at most 11 digits'})
-    phone?: string;
-}
+  @IsString()
+  @MinLength(4)
+  @IsOptional()
+  name?: string;
 
+  @IsString()
+  @IsEmail({}, { message: 'Invalid Email Format' })
+  @IsOptional()
+  email: string;
+
+  @IsString()
+  @MinLength(4, {message:'Password mmust be 4 char long.'})
+  @IsOptional()
+  password?: string;
+
+  @IsString()
+  @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
+  @IsOptional()
+  phone?: string;
+}

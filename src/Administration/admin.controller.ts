@@ -14,16 +14,12 @@ export class AdminController {
   }
 
   @Patch('update/:id')
-  async modifyPhoneNumber(
-    @Param('id') id: number,
-    @Body() adminUpdateDTO: AdminUpdateDTO,
-  ): Promise<AdminEntity> {
-    const admin = await this.adminService.modifyPhoneNumber(id, adminUpdateDTO);
-    if (!admin) {
-      throw new NotFoundException('Admin not found');
-    }
-    return admin;
-  }
+  @UsePipes(new ValidationPipe())
+  async updateAdmin(@Param('id') id: number, @Body() adminUpdateDTO: AdminUpdateDTO): Promise<AdminEntity> {
+  const updatedAdmin = await this.adminService.updateAdmin(id, adminUpdateDTO);
+  return updatedAdmin;
+}
+
 
   @Get('null')
   async getAdminsWithNullFullName(): Promise<AdminEntity[]> {

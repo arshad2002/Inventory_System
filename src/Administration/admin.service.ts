@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
 import { AdminDTO, AdminUpdateDTO } from './admin.dto';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class AdminService {
@@ -14,30 +15,72 @@ export class AdminService {
 
   async createAdmin(adminDTO: AdminDTO): Promise<AdminEntity> {
     const admin = new AdminEntity();
-    admin.fullName = adminDTO.fullName;
+    admin.name = adminDTO.name;
     admin.phone = adminDTO.phone;
     admin.isActive = adminDTO.isActive;
+    admin.email =adminDTO.email;
+    admin.password =adminDTO.password;
 
     return await this.adminRepository.save(admin);
   }
 
-  async modifyPhoneNumber(id: number, adminUpdateDTO: AdminUpdateDTO): Promise<AdminEntity> {
-    const admin = await this.adminRepository.findOneBy({id});
+  async updateAdmin(id: number, adminUpdateDTO: AdminUpdateDTO): Promise<AdminEntity> {
+    const admin = await this.adminRepository.findOneBy({ id });
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
-
+  
+    if (adminUpdateDTO.name) {
+      admin.name = adminUpdateDTO.name;
+    }
+  
+    if (adminUpdateDTO.email) {
+      admin.email = adminUpdateDTO.email;
+    }
+  
+    if (adminUpdateDTO.password) {
+      admin.password = adminUpdateDTO.password;
+    }
+  
     if (adminUpdateDTO.phone) {
       admin.phone = adminUpdateDTO.phone;
     }
-
+  
     return await this.adminRepository.save(admin);
   }
+
+  
+
+
+  // async updateAdmin(id: number, adminUpdateDTO: AdminUpdateDTO): Promise<AdminEntity> {
+  //   const admin = await this.adminRepository.findOneBy({id});
+  //   if (!admin) {
+  //       throw new NotFoundException('Admin not found');
+  //   }
+
+  //   if (adminUpdateDTO.name) {
+  //       admin.name = adminUpdateDTO.name;
+  //   }
+
+  //   if (adminUpdateDTO.email) {
+  //       admin.email = adminUpdateDTO.email;
+  //   }
+
+  //   if (adminUpdateDTO.password) {
+  //       admin.password = adminUpdateDTO.password;
+  //   }
+
+  //   if (adminUpdateDTO.phone) {
+  //       admin.phone = adminUpdateDTO.phone;
+  //   }
+
+  //   return await this.adminRepository.save(admin);
+  // }
 
   async getAdminsWithNullFullName(): Promise<AdminEntity[]> {
     return await this.adminRepository.find({
       where: {
-        fullName: Not(Not('')),
+        name: Not(Not('')),
       },
     });
   }

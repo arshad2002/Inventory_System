@@ -5,18 +5,24 @@ export class AdminEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ nullable: false })
+    name: string;
+
+    @Column({ nullable: false })
+    password: string;
+
+    @Column({ nullable: false })
+    phone: string;
+
+    @Column({ nullable: false })
+    email: string;
+
     @Column({ default: true })
     isActive: boolean;
 
-    @Column({ nullable: true })
-    fullName: string;
-
-    @Column({ type: "bigint", unsigned: true, default: 0 })
-    phone: string;
-
     @BeforeInsert()
     generateRandomNumber() {
-        this.id = Math.floor(Math.random() * 1000);
+        // Random ID generation logic if needed
+        // this.id = Math.floor(Math.random() * 1000);
     }
-
 }
