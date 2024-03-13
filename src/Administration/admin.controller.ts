@@ -1,11 +1,15 @@
 import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminEntity } from './admin.entity';
-import { AdminDTO, AdminUpdateDTO } from './admin.dto';
+import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO } from './admin.dto';
+import { CustomerEntity } from 'src/Customer/customer.entity';
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+
+  //! Admin
 
   @Post('create')
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -34,14 +38,40 @@ export class AdminController {
  
 
 //! Customers
-	@Get('allcustomers')
-	getCustomers(): object{
-		return this.adminService.getCustomers();
-		}
-	@Get('customer/:id')
-	getCustomersById(@Param('id') id: string): object{
-		return this.adminService.getCustomersById(id);
-	}
+  @Post('addcustomer')
+  @UsePipes(new ValidationPipe())
+  async createCustomer(@Body() customerDTO: CustomerDTO): Promise<CustomerEntity> {
+    return await this.adminService.createCustomer(customerDTO);
+  }
+
+  @Patch('updatecustomer/:id')
+  @UsePipes(new ValidationPipe())
+  async updateCustomer(@Param('id') id: number, @Body() customerUpdateDTO:CutomerUpdateDTO): Promise<CustomerEntity> {
+  const updateCustomer = await this.adminService.updateCustomer(id, customerUpdateDTO);
+  return updateCustomer;
+  }
+
+  @Get('allcustomers')
+  async getAllCustomers(): Promise<CustomerEntity[]> {
+    return await this.adminService.getAllCustomers();
+  }
+
+  @Get('customers/:id')
+  async getCustomerById(@Param('id') id: number): Promise<CustomerEntity> {
+    return await this.adminService.getCustomerById(id);
+  }
+
+  @Delete('customers/:id')
+  async deleteCustomerById(@Param('id') id: number): Promise<string> {
+    try {
+      return await this.adminService.deleteCustomerById(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
 
 
 //! Accountants
