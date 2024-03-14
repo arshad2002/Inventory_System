@@ -2,31 +2,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
-import { ManagerDTO } from './managerDTO';
-import { ManagerService } from './manager.service';
+// import { ManagerDTO } from './managerDTO';
+// import { ManagerService } from './manager.service';
 import { UsePipes } from '@nestjs/common/decorators/core/use-pipes.decorator';
-import { CategoryDTO } from './Category/categoryDTO';
-import { CategoryService } from './Category/category.service';
+import { CategoryService } from './category.service';
+import { CategoryDTO } from './categoryDTO';
+import { ManagerDTO } from '../managerDTO';
+import { ManagerService } from '../manager.service';
 // import { AdminService } from './admin.service';
 // import { ManagerDTO } from './adminDTO';
 //import { AppService } from './app.service';
 
-@Controller('/products')
-export class ManagerController {
-  constructor(private readonly appService: ManagerService) { }
+@Controller('/Category')
+export class CategoryController {
+  constructor(private readonly appService: CategoryService) { }
 
 
   @Post()
   @UsePipes(new ValidationPipe)
-  async createProduct(@Body() productInfo: ManagerDTO): Promise<ManagerDTO> {
+  async createNewCategory(@Body() categoryInfo : CategoryDTO): Promise<CategoryDTO> {
+
     
-   
 
-    return this.appService.createNewProduct(productInfo);
+    return this.appService.createNewCategory(categoryInfo);
   }
-  
 
-
+    
 
 
 

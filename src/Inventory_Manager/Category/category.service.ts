@@ -3,28 +3,34 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductEntity } from './Entities/product.entity';
+// import { ProductEntity } from './Entities/product.entity';
 import { Repository } from 'typeorm';
-import { ManagerDTO } from './managerDTO';
-import { CategoryEntity } from './Entities/category.entity';
-import { CategoryDTO } from './Category/categoryDTO';
+import { CategoryDTO } from './categoryDTO';
+import { CategoryEntity } from '../Entities/category.entity';
+import { ProductEntity } from '../Entities/product.entity';
+import { ManagerDTO } from '../managerDTO';
+// import { ManagerDTO } from './managerDTO';
 // import { SupplierEntity } from './Entities/supplier.entity';
 // import { AdminEntity } from './admin.entity';
 // import { Repository } from 'typeorm';
 // import { AdminDTO } from './adminDTO';
 
 @Injectable()
-export class ManagerService {
-  constructor(@InjectRepository(ProductEntity) private productRepo: Repository<ProductEntity>) { }
+export class CategoryService {
+  constructor(@InjectRepository(CategoryEntity) private categoryRepo: Repository<CategoryEntity>
   
+  ) { }
+
+     
+
   
-  async createNewProduct(productInfo: ManagerDTO): Promise<ManagerDTO> {
-    return this.productRepo.save(productInfo);
+  async createNewCategory(categoryInfo: CategoryDTO): Promise<CategoryDTO> {
+    return this.categoryRepo.save(categoryInfo);
+
+
   }
 
-
-
-
+  
 
 
 
