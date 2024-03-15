@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryEntity } from '../Entities/category.entity';
 import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
+import { ProductEntity } from '../Entities/product.entity';
 // import { ManagerService } from '../manager.service';
 // import { ManagerModule } from '../manager.module';
 // import { AdminController } from './admin.controller';
@@ -16,7 +17,7 @@ import { CategoryController } from './category.controller';
 // import { AppService } from './app.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CategoryEntity])],
+  imports: [TypeOrmModule.forFeature([CategoryEntity,ProductEntity])],
   controllers: [CategoryController],
   providers: [CategoryService],
 })

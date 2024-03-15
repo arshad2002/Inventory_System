@@ -6,9 +6,11 @@ import { ManagerModule } from './Inventory_Manager/manager.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryModule } from './Inventory_Manager/Category/category.module';
 import { CustomersModule } from './customers/customers.module';
+import { AuthModule } from './Inventory_Manager/ManagerInfo/auth/auth.module';
+import { ManagerModule2 } from './Inventory_Manager/ManagerInfo/managerInfo.module';
 
 @Module({
-  imports: [CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
+  imports: [ManagerModule2, AuthModule, CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
@@ -16,6 +18,7 @@ import { CustomersModule } from './customers/customers.module';
     password: '1234',
     database: 'inventory',//Change to your database name
     autoLoadEntities: true,
+    entities :[],
     synchronize: true,
   })],
   controllers: [AppController],

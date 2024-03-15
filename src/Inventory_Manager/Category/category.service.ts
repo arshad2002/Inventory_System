@@ -17,7 +17,8 @@ import { ManagerDTO } from '../managerDTO';
 
 @Injectable()
 export class CategoryService {
-  constructor(@InjectRepository(CategoryEntity) private categoryRepo: Repository<CategoryEntity>
+  constructor(@InjectRepository(CategoryEntity) private categoryRepo: Repository<CategoryEntity>,
+  @InjectRepository(ProductEntity) private productRepo: Repository<ProductEntity>
   
   ) { }
 
@@ -28,6 +29,15 @@ export class CategoryService {
     return this.categoryRepo.save(categoryInfo);
 
 
+  }
+
+  async createProduct(Category_id:number,id:ProductEntity):Promise<ProductEntity>{
+    const category = await this.categoryRepo.findOneBy({Category_id});
+    if (!category) {
+      throw new Error('Category not found');
+  }
+    id.category = category;
+    return this.productRepo.save(id)
   }
 
   
