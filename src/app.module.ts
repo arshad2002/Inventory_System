@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,7 +13,7 @@ import { CustomersModule } from './customers/customers.module';
     port: 5432,
     username: 'postgres',
     password: '1234',
-    database: 'inventory',//Change to your database name
+    database: 'inventory_managment',
     autoLoadEntities: true,
     synchronize: true,
   })],
