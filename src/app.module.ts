@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { ManagerModule } from './Inventory_Manager/manager.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryModule } from './Inventory_Manager/Category/category.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
-  imports: [ManagerModule,CategoryModule,TypeOrmModule.forRoot({
+  imports: [CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
