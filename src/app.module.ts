@@ -8,9 +8,11 @@ import { CategoryModule } from './Inventory_Manager/Category/category.module';
 import { CustomersModule } from './customers/customers.module';
 import { AuthModule } from './Inventory_Manager/ManagerInfo/auth/auth.module';
 import { ManagerModule2 } from './Inventory_Manager/ManagerInfo/managerInfo.module';
+import { MulterModule } from '@nestjs/platform-express';
+
 
 @Module({
-  imports: [ManagerModule2, AuthModule, CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
+  imports: [ MulterModule.register({dest:'./uploadedFiles'}), ManagerModule2, AuthModule, CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,

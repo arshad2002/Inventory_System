@@ -27,6 +27,14 @@ export class ManagerController {
   async createAdmin(@Body() adminDTO: ManagerDTO): Promise<ManagerEntity> {
     return await this.adminService.createAdmin(adminDTO);
   }
+  
+  
+
+ 
+  
+  
+
+ 
 
 
 

@@ -24,6 +24,12 @@ export class AuthController {
   signIn(@Body() logindata: loginDTO) {
     return this.authService.signIn(logindata);
   }
+  @Post('/file')
+  handleUpload():object{
+    return {
+      message:'file uploaded'
+    }
+  }
 
  
 }
