@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UploadedFile, UploadedFiles, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Res, UploadedFile, UploadedFiles, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ManagerDTO } from './managerDTO';
 import { ManagerService } from './manager.service';
 import { UsePipes } from '@nestjs/common/decorators/core/use-pipes.decorator';
@@ -45,7 +45,7 @@ export class ManagerController {
 
     
   
-  @Post('/fileMulti')
+  @Post('/fileUpload')
   @UseInterceptors(FileInterceptor('product2',{
     storage : diskStorage({
       destination : './uploadedFiles',
@@ -65,6 +65,19 @@ export class ManagerController {
       message:'file uploaded'
     }
   }
+
+
+
+
+
+
+
+
+  @Get('/getimage/:name')
+getImages(@Param('name') name, @Res() res) {
+res.sendFile(name,{ root: './uploadedFiles' })
+}
+
 //   @Post('/fileMulti')
 //   @UseInterceptors(FileFieldsInterceptor([{
 //     name : 'product',maxCount :2
