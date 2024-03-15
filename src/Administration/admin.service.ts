@@ -2,11 +2,15 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
-import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO } from './admin.dto';
+import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO, loginDTO } from './admin.dto';
 import { CustomerEntity } from 'src/Customer/customer.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AdminService {
+    findOne(logindata: loginDTO) {
+        throw new Error('Method not implemented.');
+    }
   save(customerDTO: CustomerDTO): CustomerEntity | PromiseLike<CustomerEntity> {
     throw new Error('Method not implemented.');
   }
@@ -14,7 +18,9 @@ export class AdminService {
     @InjectRepository(AdminEntity)
     private adminRepository: Repository<AdminEntity>,
     @InjectRepository(CustomerEntity)
-    private customerRepository: Repository<CustomerEntity>
+    private customerRepository: Repository<CustomerEntity>,
+    private jwtService: JwtService
+
   ) {}
 
 
@@ -65,6 +71,10 @@ export class AdminService {
 
   async deleteAdmin(id: number): Promise<void> {
     await this.adminRepository.delete(id);
+  }
+
+  async findOneBy( logindata:loginDTO): Promise<any> {
+    return await this.adminRepository.findOneBy({email:logindata.email});
   }
     
 

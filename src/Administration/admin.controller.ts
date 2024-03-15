@@ -1,13 +1,18 @@
-import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminEntity } from './admin.entity';
 import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO } from './admin.dto';
 import { CustomerEntity } from 'src/Customer/customer.entity';
+import { AuthService } from "./auth/auth.service";
+import { AuthGuard } from './auth/auth.gaurd';
+import { Request } from 'express';
+
 
 @Controller('admin')
+@UseGuards(AuthGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
-
+  
 
   //! Admin
 
@@ -21,8 +26,8 @@ export class AdminController {
   @UsePipes(new ValidationPipe())
   async updateAdmin(@Param('id') id: number, @Body() adminUpdateDTO: AdminUpdateDTO): Promise<AdminEntity> {
   const updatedAdmin = await this.adminService.updateAdmin(id, adminUpdateDTO);
-  return updatedAdmin;
-}
+   return updatedAdmin;
+  }
 
 
   @Get('null')
@@ -34,6 +39,9 @@ export class AdminController {
   async deleteAdmin(@Param('id') id: number): Promise<void> {
      await this.adminService.deleteAdmin(id);
   }
+
+
+
 
  
 

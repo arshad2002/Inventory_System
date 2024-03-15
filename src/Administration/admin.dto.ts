@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsEmail, Matches, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsBoolean, IsEmail, Matches, IsOptional, MinLength, IsNotEmpty } from 'class-validator';
 
 export class AdminDTO {
     @IsString()
@@ -22,6 +22,13 @@ export class AdminDTO {
     isActive: boolean;
 }
 
+export class loginDTO {
+  @IsEmail() 
+  email: string;
+  @IsNotEmpty() 
+  password: string; 
+}
+
 export class AdminUpdateDTO {
   @IsString()
   @MinLength(4)
@@ -43,6 +50,7 @@ export class AdminUpdateDTO {
   @IsOptional()
   phone?: string;
 }
+
 
 export class CustomerDTO{
   @IsString()
