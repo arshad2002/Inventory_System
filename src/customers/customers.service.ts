@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerEntity } from './Entity/customer.entity'
 import { InjectRepository } from '@nestjs/typeorm';
-import { And, Repository, getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CustomerDto } from './dto/customers.dto';
 
@@ -33,8 +33,9 @@ export class CustomersService {
   async login(loginCredential): Promise<object>{
     const user  = await this.getUserByEmail(loginCredential.email);
     if(user){
-      if(user.password==loginCredential.password){
-        return {"message" : "Login successfull", "User Name" : user.username};
+      const isMatch = await bcrypt.compare(loginCredential.password, user.password);
+      if(isMatch){
+        return {"message" : "Login successfull", user};
       }else{
         return {"message": "Wrong Password"}
       }
@@ -46,7 +47,7 @@ export class CustomersService {
   async getCustomerByUserName(username: string): Promise<CustomerEntity | undefined>{
     return await this.customer.findOne({where:{username}});
   }
-  async getUserByEmail(email: string){
+  async getUserByEmail(email: string): Promise<CustomerEntity | undefined>{
     return await this.customer.findOne({where: {email}});
 
   }
