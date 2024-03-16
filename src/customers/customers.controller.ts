@@ -16,7 +16,9 @@ export class CustomersController {
   constructor(private customersService: CustomersService) {}
   //1
   @Post()
-  login() {}
+  login(@Body() customerDto: CustomerDto[]) : object {
+    return this.customersService.login(customerDto);
+  }
   //2
   @Post('signup')
   @UsePipes(new ValidationPipe())

@@ -30,6 +30,19 @@ export class CustomersService {
     }
   }
   
+  async login(loginCredential): Promise<object>{
+    const user  = await this.getUserByEmail(loginCredential.email);
+    if(user){
+      if(user.password==loginCredential.password){
+        return {"message" : "Login successfull", "User Name" : user.username};
+      }else{
+        return {"message": "Wrong Password"}
+      }
+    }else{
+      return {"message" : "No Customer Found"}
+    }
+  }
+  
   async getCustomerByUserName(username: string): Promise<CustomerEntity | undefined>{
     return await this.customer.findOne({where:{username}});
   }
