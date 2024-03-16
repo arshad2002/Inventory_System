@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ManagerService } from '../managerInfo.service';
 import { ManagerDTO, loginDTO } from '../managerInfo.dto';
+// import { ManagerEntity } from '../managerInfo.entity';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
   ) {}
 
   async signUp(myobj: ManagerDTO): Promise<ManagerDTO> {
-    return await this.adminService.createAdmin(myobj);
+    return await this.adminService.createManager(myobj);
   }
 
   async signIn( logindata:loginDTO): Promise<{ access_token: string }> {
@@ -32,4 +33,10 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+ 
+
+
+
+
 }

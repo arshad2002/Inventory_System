@@ -19,14 +19,14 @@ export class ManagerService {
  
   constructor(
     @InjectRepository(ManagerEntity)
-    private adminRepository: Repository<ManagerEntity>,
+    private managerRepo: Repository<ManagerEntity>,
   
     private jwtService: JwtService
 
   ) {}
 
 
-  async createAdmin(adminDTO: ManagerDTO): Promise<ManagerEntity> {
+  async createManager(adminDTO: ManagerDTO): Promise<ManagerEntity> {
     const admin = new ManagerEntity();
     admin.name = adminDTO.name;
     admin.phone = adminDTO.phone;
@@ -34,24 +34,27 @@ export class ManagerService {
     admin.email =adminDTO.email;
     admin.password =adminDTO.password;
 
-    return await this.adminRepository.save(admin);
+    return await this.managerRepo.save(admin);
   }
 
 
 
-  async getAdminsWithNullFullName(): Promise<ManagerEntity[]> {
-    return await this.adminRepository.find({
-      where: {
-        name: Not(Not('')),
-      },
-    });
-  }
+  // async getAdminsWithNullFullName(): Promise<ManagerEntity[]> {
+  //   return await this.managerRepo.find({
+  //     where: {
+  //       name: Not(Not('')),
+  //     },
+  //   });
+  // }
 
   
 
   async findOneBy( logindata:loginDTO): Promise<any> {
-    return await this.adminRepository.findOneBy({email:logindata.email});
+    return await this.managerRepo.findOneBy({email:logindata.email});
   }
+
+
+ 
     
 
 //! Customers
@@ -117,29 +120,29 @@ export class ManagerService {
   
 
 
-//! Accountants
-	getAccountants(): object{
-		return {message: "List Of All Accountants"}
-	}
-  getAccountantsById(id: string): object{
-    return {message: "Your AccountantID is " + id};
-    }
+// //! Accountants
+// 	getAccountants(): object{
+// 		return {message: "List Of All Accountants"}
+// 	}
+//   getAccountantsById(id: string): object{
+//     return {message: "Your AccountantID is " + id};
+//     }
 
 
-//! Products
-	getProducts(): object{
-		return {message: "List Of All Products"}
-	}
-  getProductsById(id: string): object{
-    return {message: "Your ProductID is " + id};
-    }
+// //! Products
+// 	getProducts(): object{
+// 		return {message: "List Of All Products"}
+// 	}
+//   getProductsById(id: string): object{
+//     return {message: "Your ProductID is " + id};
+//     }
 
-//! Categories
-	getCategories(): object{
-		return {message: "List Of All Categories"}
-	}
-  getCategoriesById(id: string): object{
-    return {message: "Your CategoryID is " + id};
-    }
+// //! Categories
+// 	getCategories(): object{
+// 		return {message: "List Of All Categories"}
+// 	}
+//   getCategoriesById(id: string): object{
+//     return {message: "Your CategoryID is " + id};
+//     }
 
 }

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post,UsePipes, UseInterceptors, UploadedFile, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post,UsePipes, UseInterceptors, UploadedFile, ValidationPipe, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 // import { ManagerDTO, loginDTO } from 'src/Administration/admin.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,6 +30,9 @@ export class AuthController {
       message:'file uploaded'
     }
   }
+
+
+ 
 
  
 }

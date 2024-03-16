@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException, UseGuards, Put } from '@nestjs/common';
 // import { AdminService } from './admin.service';
 // import { ManagerEntity } from './admin.entity';
 // import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO } from './admin.dto';
@@ -14,7 +14,7 @@ import { ManagerDTO } from './managerInfo.dto';
 import { ManagerEntity } from './managerInfo.entity';
 
 
-@Controller('manager')
+@Controller('managers')
 @UseGuards(AuthGuard)
 export class ManagerController {
   constructor(private readonly adminService: ManagerService) {}
@@ -22,12 +22,18 @@ export class ManagerController {
 
   //! Admin
 
-  @Post('create')
+  @Post('')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createAdmin(@Body() adminDTO: ManagerDTO): Promise<ManagerEntity> {
-    return await this.adminService.createAdmin(adminDTO);
+  async createManager(@Body() adminDTO: ManagerDTO): Promise<ManagerEntity> {
+    return await this.adminService.createManager(adminDTO);
   }
+
+
+ 
   
+
+
+
   
 
  

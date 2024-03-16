@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './Entities/product.entity';
 import { Repository } from 'typeorm';
@@ -23,6 +23,29 @@ export class ManagerService {
   }
 
 
+  async getAllProducts(): Promise<ProductEntity[]> {
+    return await this.productRepo.find();
+  }
+
+  async getProductByName(): Promise<ProductEntity[]> {
+    return await this.productRepo.find({
+      where : {Product_name:"saree"}
+    });
+  }
+
+
+
+
+
+  async getProductById(id: number): Promise<ProductEntity> {
+    const product = await this.productRepo.findOneBy({id});
+    if (!product) {
+      throw new NotFoundException('product not found');
+    }
+    return product;
+  }
+
+
 
 
 
@@ -38,9 +61,22 @@ export class ManagerService {
 //     return this.productRepo.findOneBy({id:id});
 //     }
 
-//     async updateUser(id: number, updatedUser: ManagerDTO): Promise<ManagerDTO> {
-//       await this.productRepo.update(id, updatedUser);
-//       return this.productRepo.findOneBy({id:id}); }
+    async updateProductById(id: number, updateProduct: ManagerDTO): Promise<ManagerDTO> {
+      await this.productRepo.update(id, updateProduct);
+      return this.productRepo.findOneBy({id:id}); }
+
+
+
+
+
+      async deleteProductById(id: number): Promise<string> {
+        const product = await this.productRepo.findOneBy({id});
+        if (!product) {
+          throw new NotFoundException('product not found');
+        }
+        await this.productRepo.remove(product);
+        return 'Product' +id+ ' Deleted Successfully';
+      }
       
 
 

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Res, UploadedFile, UploadedFiles, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Res, UploadedFile, UploadedFiles, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ManagerDTO } from './managerDTO';
 import { ManagerService } from './manager.service';
 import { UsePipes } from '@nestjs/common/decorators/core/use-pipes.decorator';
@@ -9,7 +9,8 @@ import { CategoryDTO } from './Category/categoryDTO';
 import { CategoryService } from './Category/category.service';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-// import { AdminService } from './admin.service';
+import { ProductEntity } from './Entities/product.entity';
+// import { appService } from './admin.service';
 // import { ManagerDTO } from './adminDTO';
 //import { AppService } from './app.service';
 
@@ -29,26 +30,12 @@ export class ManagerController {
    
   }
 
-  // @Post('/file')
-  // @UseInterceptors(FileInterceptor('product'))
-  // handleUpload(@UploadedFile() product : Express.Multer.File):object{
-  //   console.log(product)
-  //   return {
-  //     message:'file uploaded'
-  //   }
-  // }
-
-
-
-
-
-
-    
+ 
   
   @Post('/fileUpload')
   @UseInterceptors(FileInterceptor('product2',{
     storage : diskStorage({
-      destination : './uploadedFiles',
+      destination : './ManagerFiles',
       filename : (req,file,callback)=>{
         callback(null,Date.now()+file.originalname)
 
@@ -73,25 +60,33 @@ export class ManagerController {
 
 
 
-  @Get('/getimage/:name')
+  @Get('/getfile/:name')
 getImages(@Param('name') name, @Res() res) {
 res.sendFile(name,{ root: './uploadedFiles' })
 }
 
-//   @Post('/fileMulti')
-//   @UseInterceptors(FileFieldsInterceptor([{
-//     name : 'product',maxCount :2
-//   },
-//   {
-//     name : 'product2',maxCount:1
-//   }
-// ]))
-//   handleUploadMultiple(@UploadedFiles() product : {product?:Express.Multer.File[],product2?:Express.Multer.File[]}):object{
-//     console.log(product)
-//     return {
-//       message:'file uploaded'
-//     }
-//   }
+
+
+
+@Get('allproducts')
+  async getAllProducts(): Promise<ProductEntity[]> {
+    return await this.appService.getAllProducts();
+  }
+
+
+
+@Get('Productname')
+  async getProductByName(): Promise<ProductEntity[]> {
+    return await this.appService.getProductByName();
+  }
+
+
+  @Get('product/:id')
+  async getProductById(@Param('id') id: number): Promise<ProductEntity> {
+    return await this.appService.getProductById(id);
+  }
+
+
 
   
 
@@ -115,11 +110,24 @@ res.sendFile(name,{ root: './uploadedFiles' })
 //   async getUserById(@Param('id') id: number): Promise<ManagerDTO> {
 //     return this.appService.getUserById(id);
 //   }
-//   @Put(':id')
-//   @UsePipes(new ValidationPipe)
-//   async updateUser(@Param('id') id: number, @Body() updatedUser: ManagerDTO): Promise<ManagerDTO> {
-//     return this.appService.updateUser(id, updatedUser);
-//   }
+  @Put(':id')
+  @UsePipes(new ValidationPipe)
+  async updateProductById(@Param('id') id: number, @Body() updateProduct: ManagerDTO): Promise<ManagerDTO> {
+    return this.appService.updateProductById(id, updateProduct);
+  }
+
+
+  @Delete('product/:id')
+  async deleteProductById(@Param('id') id: number): Promise<string> {
+    try {
+      return await this.appService.deleteProductById(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
 
 
 

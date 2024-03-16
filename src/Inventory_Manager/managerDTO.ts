@@ -21,9 +21,7 @@ export class ManagerDTO {
     Supplier_id : number;
     Unit_price : number;
     StockQuantity : number
-    @IsNotEmpty()
-    Category_id :number
-
+    
     
     
 }

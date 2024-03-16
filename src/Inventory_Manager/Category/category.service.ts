@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 // import { ProductEntity } from './Entities/product.entity';
 import { Repository } from 'typeorm';
@@ -39,6 +39,29 @@ export class CategoryService {
     id.category = category;
     return this.productRepo.save(id)
   }
+
+  async getAllCategories(): Promise<CategoryEntity[]> {
+    return await this.categoryRepo.find();
+  }
+
+
+
+
+  async deleteCategoryById(Category_id: number): Promise<string> {
+    const category = await this.categoryRepo.findOneBy({Category_id});
+    if (!category) {
+      throw new NotFoundException('category not found');
+    }
+    await this.categoryRepo.remove(category);
+    return 'category' +Category_id+ ' Deleted Successfully';
+  }
+
+
+
+  async updateProductById(Category_id: number, updateProduct: CategoryDTO): Promise<CategoryDTO> {
+    await this.categoryRepo.update(Category_id, updateProduct);
+    return this.categoryRepo.findOneBy({Category_id:Category_id}); }
+  
 
   
 
