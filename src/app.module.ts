@@ -10,10 +10,12 @@ import { AuthModule } from './Inventory_Manager/ManagerInfo/auth/auth.module';
 import { ManagerModule2 } from './Inventory_Manager/ManagerInfo/managerInfo.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { SupplierModule } from './Inventory_Manager/Supplier/supplier.module';
+import { EmployeeModule } from './Account_Personel/Employees/employee.module';
+import { TransactionModule } from './Account_Personel/Transactions/transaction.module';
 
 
 @Module({
-  imports: [SupplierModule, MulterModule.register({dest:'./uploadedFiles'}), ManagerModule2, AuthModule, CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
+  imports: [TransactionModule,EmployeeModule,SupplierModule, MulterModule.register({dest:'./uploadedFiles'}), ManagerModule2, AuthModule, CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
