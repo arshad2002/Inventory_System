@@ -5,21 +5,34 @@ import {
   Get,
   Patch,
   Post,
+  Session,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { CustomerDto } from './dto/customers.dto';
 import { CustomersService } from './customers.service';
+import * as bcrypt from 'bcrypt';
 
 @Controller('customers')
 export class CustomersController {
   constructor(private customersService: CustomersService) {}
-  //1
+
   @Post()
-  login(@Body() customerDto: CustomerDto[]) : object {
-    return this.customersService.login(customerDto);
+  async login(@Body() customerDto: CustomerDto[], @Session() session:Record<string, any>) : Promise<object> {
+    const user = await this.customersService.getUserByEmail(customerDto["email"]);
+    if(user){
+      const isMatch = await bcrypt.compare(customerDto["password"], user.password);
+      if(isMatch){
+        session.user = user;
+        return {"message" : "Login successfull", user};
+      }else{
+        return {"message": "Wrong Password"}
+      }
+    }else{
+      return {"message" : "No Customer Found"}
+    }    
   }
-  //2
+
   @Post('signup')
   @UsePipes(new ValidationPipe())
   signUp(@Body() customerDto: CustomerDto) :object {
@@ -27,7 +40,10 @@ export class CustomersController {
   }
   //3
   @Get('profile')
-  profile() {}
+  profile(@Session() session:Record<string, any>) {
+    session.username = 'john';
+    return session;
+  }
   //4
   @Patch('profile/updates')
   profileUpdate() {}
