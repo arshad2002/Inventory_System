@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Session,
+  UnauthorizedException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -38,7 +39,7 @@ export class CustomersController {
   signUp(@Body() customerDto: CustomerDto) :object {
     return this.customersService.signUp(customerDto);
   }
-  //3
+  
   @Get('profile')
   profile(@Session() session:Record<string, any>) {
     session.username = 'john';
@@ -79,12 +80,12 @@ export class CustomersController {
   orderTracking() {}
 
   //15 signOut session use
-  // @Get('signout')
-  // signout(@Session() session) {
-  //   if (session.destroy()) {
-  //     return { message: 'you are logged out' };
-  //   } else {
-  //     throw new UnauthorizedException('invalid actions');
-  //   }
-  // }
+  @Get('signout')
+  signout(@Session() session) {
+    if (session.destroy()) {
+      return { message: 'you are logged out' };
+    } else {
+      throw new UnauthorizedException('invalid actions');
+    }
+  }
 }
