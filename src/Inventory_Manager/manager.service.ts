@@ -54,13 +54,6 @@ export class ManagerService {
 
 
 
-//   async getAllUsers(): Promise<ManagerDTO[]> {
-//     return this.productRepo.find();
-//   }
-//   async getUserById(id: number): Promise<ManagerDTO> {
-//     return this.productRepo.findOneBy({id:id});
-//     }
-
     async updateProductById(id: number, updateProduct: ManagerDTO): Promise<ManagerDTO> {
       await this.productRepo.update(id, updateProduct);
       return this.productRepo.findOneBy({id:id}); }
@@ -98,16 +91,4 @@ export class ManagerService {
 
 
 
-  // getHelloB(): string {
-  //   return 'Hello universe';
-  // }
-  // getUserById(id: string): object {
-  //   return { message: 'your id is' + id };
-  // }
-  // getReady(): object {
-  //   return { message: 'Its time to tot totototo get ready' };
-  // }
-  // addUser(myobj: object): object {
-  //   return myobj;
-  // }
 }

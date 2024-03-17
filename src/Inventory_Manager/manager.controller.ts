@@ -131,16 +131,4 @@ res.sendFile(name,{ root: './uploadedFiles' })
 
 
 
-  // @Get('/user')
-  // getHello(): string {
-  //   return this.appService.getHelloB();
-  // }
-  // @Get('/users/:id')
-  // getUserById(@Param('id') id: string): object {
-  //   return this.appService.getUserById(id);
-  // }
-  // @Post('/adduser')
-  // addUser(@Body() myobj: object): object {
-  //   return this.appService.addUser(myobj);
-  // }
 }

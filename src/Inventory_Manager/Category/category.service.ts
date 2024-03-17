@@ -70,16 +70,7 @@ export class CategoryService {
 
 
 
-//   async getAllUsers(): Promise<ManagerDTO[]> {
-//     return this.productRepo.find();
-//   }
-//   async getUserById(id: number): Promise<ManagerDTO> {
-//     return this.productRepo.findOneBy({id:id});
-//     }
 
-//     async updateUser(id: number, updatedUser: ManagerDTO): Promise<ManagerDTO> {
-//       await this.productRepo.update(id, updatedUser);
-//       return this.productRepo.findOneBy({id:id}); }
       
 
 
@@ -101,16 +92,4 @@ export class CategoryService {
 
 
 
-  // getHelloB(): string {
-  //   return 'Hello universe';
-  // }
-  // getUserById(id: string): object {
-  //   return { message: 'your id is' + id };
-  // }
-  // getReady(): object {
-  //   return { message: 'Its time to tot totototo get ready' };
-  // }
-  // addUser(myobj: object): object {
-  //   return myobj;
-  // }
 }
