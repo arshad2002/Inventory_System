@@ -3,6 +3,7 @@ import { CustomerEntity } from './Entity/customer.entity'
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 
 
 
@@ -10,9 +11,11 @@ import * as bcrypt from 'bcrypt';
 export class CustomersService {
   constructor(
     @InjectRepository(CustomerEntity)
-    private customer: Repository<CustomerEntity>
-  ) {}
+    private customer: Repository<CustomerEntity>,
 
+    @InjectRepository(CustomerProfileEntity)
+    private customerProfile: Repository<CustomerProfileEntity>
+  ) {}
 
   async signUp(customerInfo) {
     const existingUserByUsername = await this.getCustomerByUserName(customerInfo.username);
@@ -36,6 +39,31 @@ export class CustomersService {
     return await this.customer.findOne({where: {email}});
 
   }
+
+  async createProfile(profileInfo: CustomerProfileEntity): Promise<CustomerProfileEntity> {
+    const newProfile = this.customerProfile.create(profileInfo);
+    return this.customerProfile.save(newProfile);
+  }
+
+  async getProfilesById(userId: number): Promise<any> {
+    return this.customerProfile
+        .createQueryBuilder('customerProfile')
+        .where('customerProfile.user = :userId', { userId })
+        .getMany();
+  }
+  
+  updateProfile(updatedProfile: Partial<CustomerProfileEntity>): Promise<CustomerProfileEntity> {
+    return this.customerProfile.save(updatedProfile);
+  }
+
+  async deleteProfile(profileId: number): Promise<any> {
+      return await this.customerProfile.delete(profileId);
+  }
+
+
+
+
+
 
 
 }

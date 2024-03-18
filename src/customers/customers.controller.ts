@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
+  Param,
   Patch,
   Post,
   Session,
@@ -13,6 +16,7 @@ import {
 import { CustomerDto } from './dto/customers.dto';
 import { CustomersService } from './customers.service';
 import * as bcrypt from 'bcrypt';
+import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 
 @Controller('customers')
 export class CustomersController {
@@ -39,15 +43,43 @@ export class CustomersController {
   signUp(@Body() customerDto: CustomerDto) :object {
     return this.customersService.signUp(customerDto);
   }
+
+  @Post('profile')
+  @UsePipes(new ValidationPipe())
+  async createProfile(@Body() CustomerProfileEntity: CustomerProfileEntity, @Session() session: Record<string, any>) {
+    if (!session.user) {
+      throw new UnauthorizedException('User not found. Login first');
+    }else{
+    CustomerProfileEntity.user = session.user;
+    return this.customersService.createProfile(CustomerProfileEntity);
+    }
+  }
   
   @Get('profile')
   profile(@Session() session:Record<string, any>) {
-    session.username = 'john';
-    return session;
+    return this.customersService.getProfilesById(session.user.user_id);
   }
-  //4
-  @Patch('profile/updates')
-  profileUpdate() {}
+ 
+  @Patch('profile')
+  profileUpdate(@Body() updatedProfile: Partial<CustomerProfileEntity>, @Session() session: Record<string, any>) {
+    const profileId = updatedProfile.profile_id;
+    if (!profileId) {
+      throw new BadRequestException('Profile ID is required');
+    }else{
+      return this.customersService.updateProfile(updatedProfile); 
+    }
+  }
+
+  @Delete('profile/:profileId')
+  async deleteProfile(@Param('profileId') profileId: number): Promise<any> {
+     const info = await this.customersService.deleteProfile(profileId);
+      if(info.affected){
+        return {"message" : "Profile deleted successfully"};
+      }else{
+        throw new InternalServerErrorException('Failed to delete profile');
+      }
+  }
+  
   //5
   @Get('viewProduct')
   viewProduct() {}
