@@ -20,7 +20,7 @@ import { CustomersService } from './customers.service';
 import * as bcrypt from 'bcrypt';
 import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 import { ProductEntity } from './Entity/product.entity';
-import { SessionGuard } from 'src/session.guard';
+import { SessionGuard } from 'src/customers/session.guard';
 
 @Controller('customers')
 export class CustomersController {
