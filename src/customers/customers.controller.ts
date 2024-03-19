@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   InternalServerErrorException,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -24,6 +25,8 @@ import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 import { SessionGuard } from 'src/customers/session.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
+import { CartEntity } from './Entity/cart.entity';
+import { OrderEntity } from './Entity/order.entity';
 
 @Controller('customers')
 export class CustomersController {
@@ -59,6 +62,7 @@ export class CustomersController {
     return this.customersService.signUp(customerDto);
   }
 
+  @UseGuards(SessionGuard)
   @Post('profilepicture')
   @UseInterceptors(
   FileInterceptor('myfile', {
@@ -88,9 +92,9 @@ export class CustomersController {
     
   }
 
+  @UseGuards(SessionGuard)
   @Post('profile')
   @UsePipes(new ValidationPipe())
-  @UseGuards(SessionGuard)
   async createProfile(
     @Body() CustomerProfileEntity: CustomerProfileEntity,
     @Session() session: Record<string, any>,
@@ -103,14 +107,14 @@ export class CustomersController {
     }
   }
 
-  @Get('profile')
   @UseGuards(SessionGuard)
+  @Get('profile')
   profile(@Session() session: Record<string, any>) {
     return this.customersService.getProfilesById(session.user.user_id);
   }
 
-  @Patch('profile')
   @UseGuards(SessionGuard)
+  @Patch('profile')
   profileUpdate(
     @Body() updatedProfile: Partial<CustomerProfileEntity>,
     @Session() session: Record<string, any>,
@@ -123,8 +127,8 @@ export class CustomersController {
     }
   }
 
-  @Delete('profile/:profileId')
   @UseGuards(SessionGuard)
+  @Delete('profile/:profileId')
   async deleteProfile(@Param('profileId') profileId: number): Promise<any> {
     const info = await this.customersService.deleteProfile(profileId);
     if (info.affected) {
@@ -134,14 +138,14 @@ export class CustomersController {
     }
   }
 
-  @Get('viewProduct')
   @UseGuards(SessionGuard)
+  @Get('viewProduct')
   viewProduct(): any {
     return this.customersService.getAllProducts();
   }
 
-  @Get('searchProduct')
   @UseGuards(SessionGuard)
+  @Get('searchProduct')
   async searchProduct(@Query('keyword') keyword: string): Promise<any> {
     if (!keyword) {
       throw new BadRequestException('Keyword is required');
@@ -154,34 +158,48 @@ export class CustomersController {
       }
     }
   }
-  //7
 
-  @Post('order')
-  orderProduct() {}
+  @Post('order/:pId')
+  async placeOrder(@Param("pId") pId: number,@Session() session: Record<string, any>): Promise<OrderEntity> {
+    return this.customersService.placeOrder(session.user, pId);
+  }
 
   @Post('cart')
-  addProductToCart() {}
+  createCart(@Session() session: Record<string, any>): Promise<CartEntity> {
+    const customerId = session.user.user_id;
+    if (!customerId) {
+      throw new UnauthorizedException('Customer not found. Login first');
+    }
+    return this.customersService.createCart(customerId)
+      .then(cart => {
+        session.cartId = cart.cart_id;
+        return cart;
+      });
+  }
+  @Post('cart/:productId')
+  async addToCart(@Param('productId') productId: number, @Session() session: Record<string, any>): Promise<CartEntity> {
+    const cartId = session.cartId;
+    if (!cartId) {
+      throw new NotFoundException('Cart ID not found in session');
+    }
+    return this.customersService.addToCart(cartId, productId);
+  }
 
   @Get('cart')
-  viewCart() {}
+  viewCart( @Session() session: Record<string, any>) {
+    const cartId = session.cartId;
+    if (!cartId) {
+      throw new NotFoundException('Cart ID not found in session');
+    }
+    return this.customersService.getCart(cartId);
+  }
 
-  @Delete('cart')
-  deleteCartProduct() {}
   //10
-  @Post('profile/shipAddress')
+  @Post('shipAddress')
   shipAddress() {}
-  //11
-  @Post('wishlist')
-  wishlist() {}
   //12
   @Post('review')
   productReview() {}
-  //13
-  @Post('productReturn')
-  productReturn() {}
-  //14
-  @Get('order/track')
-  orderTracking() {}
 
   //15 signOut session use
   @Get('signout')

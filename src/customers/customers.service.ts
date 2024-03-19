@@ -5,7 +5,8 @@ import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 import { ProductEntity } from './Entity/product.entity';
-import { Category } from './Entity/category.entity';
+import { CartEntity } from './Entity/cart.entity';
+import { OrderEntity } from './Entity/order.entity';
 
 
 
@@ -20,6 +21,12 @@ export class CustomersService {
 
     @InjectRepository(ProductEntity)
     private productRepository: Repository<ProductEntity>,
+
+    @InjectRepository(CartEntity)
+    private readonly cartRepository: Repository<CartEntity>,
+    
+    @InjectRepository(OrderEntity)
+    private readonly orderRepository: Repository<OrderEntity>
 
   ) {}
 
@@ -79,6 +86,44 @@ export class CustomersService {
   async getProductByKeyWord(keyword: string): Promise<any> {
     return await this.productRepository.find({ where: { product_name: Like(`%${keyword}%`) } });
   }
+
+  //cart
+  async createCart(user_id): Promise<CartEntity> {
+    const customer = await this.customerRepository.findOne({where:{user_id}});
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
+    }
+    const cart = new CartEntity();
+    cart.customer = customer;
+    return this.cartRepository.save(cart);
+  }
+
+  async addToCart(cartId: number, productId: number): Promise<CartEntity> {
+    const cart = await this.cartRepository.findOne({ where: { cart_id: cartId }, relations: ['products'] });
+    const product = await this.productRepository.findOne({where:{product_id: productId}, relations: ['carts']});
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    cart.products.push(product);
+    return this.cartRepository.save(cart);
+  }
+
+  async getCart(cartId: number): Promise<CartEntity> {
+    return this.cartRepository.findOne({ where: { cart_id: cartId }, relations: ['products'] });
+  }
   
+  async placeOrder(customer, productId): Promise<OrderEntity> {
+    const product = await this.productRepository.findOne({where:{product_id: productId}});
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    const totalPrice = product.price;
+    const order = new OrderEntity();
+    order.customer = customer;
+    order.products = [product];
+    order.total_price = totalPrice;
+
+    return this.orderRepository.save(order);
+  }
 
 }

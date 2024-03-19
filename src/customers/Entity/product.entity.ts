@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { Category } from './category.entity';
-import { CustomerEntity } from './customer.entity';
+import { CartEntity } from './cart.entity';
+import { OrderEntity } from './order.entity';
 
 
 @Entity("product")
@@ -19,5 +20,12 @@ export class ProductEntity {
 
     @ManyToOne(() => Category, category => category.products)
     category: Category;
+
+    @ManyToOne(() => OrderEntity, order => order.products)
+    order: OrderEntity;
+    
+    @ManyToMany(() => CartEntity, cart => cart.products)
+    @JoinTable()
+    carts: CartEntity[];
 
 }
