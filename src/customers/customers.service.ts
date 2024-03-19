@@ -57,6 +57,12 @@ export class CustomersService {
         .where('customerProfile.user = :userId', { userId })
         .getMany();
   }
+
+  async updateProfilePicture(userId: number, newValue: string): Promise<void> {
+    const user = await this.customerRepository.findOne({where:{user_id: userId}});
+    user.filename = newValue;
+    await this.customerRepository.save(user);
+  }
   
   updateProfile(updatedProfile: Partial<CustomerProfileEntity>): Promise<CustomerProfileEntity> {
     return this.customerProfileRepository.save(updatedProfile);
@@ -73,5 +79,6 @@ export class CustomersService {
   async getProductByKeyWord(keyword: string): Promise<any> {
     return await this.productRepository.find({ where: { product_name: Like(`%${keyword}%`) } });
   }
+  
 
 }

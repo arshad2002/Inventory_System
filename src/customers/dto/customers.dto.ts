@@ -16,4 +16,6 @@ export class CustomerDto {
   @IsNotEmpty()
   @IsStrongPassword()
   password: string;
+
+  filename: string;
 }
