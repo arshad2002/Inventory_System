@@ -6,6 +6,7 @@ import {
   Get,
   InternalServerErrorException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Session,
@@ -70,8 +71,10 @@ export class CustomersController {
     }
   }
 
+
+
   @Delete('profile/:profileId')
-  async deleteProfile(@Param('profileId') profileId: number): Promise<any> {
+  async deleteProfile(@Param('profileId',ParseIntPipe) profileId: number): Promise<any> {
      const info = await this.customersService.deleteProfile(profileId);
       if(info.affected){
         return {"message" : "Profile deleted successfully"};

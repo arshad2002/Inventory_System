@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Matches, MaxLength } from "class-validator";
 import { CustomerEntity } from './customer.entity';
 
 @Entity("Customer Profile")
@@ -13,11 +13,15 @@ export class CustomerProfileEntity {
   
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50)
+  @Matches(/^[a-zA-Z]+$/)
   @Column()
   FirstName: string;
   
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50)
+  @Matches(/^[a-zA-Z]+$/)
   @Column()
   LastName: string;
 
@@ -33,11 +37,13 @@ export class CustomerProfileEntity {
   
   @IsString()
   @IsNotEmpty()
+  @MaxLength(20)
   @Column()
   city: string;
 
   @IsString()
   @IsNotEmpty()
+  @MaxLength(20)
   @Column()
   divition: string;
 
