@@ -4,8 +4,11 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { CustomerProfileEntity } from './customerprofile.entity';
+import { ProductEntity } from './product.entity';
 
 @Entity('customer')
 export class CustomerEntity {
@@ -26,4 +29,5 @@ export class CustomerEntity {
 
   @OneToMany(() => CustomerProfileEntity, profile => profile.user)
   profiles: CustomerProfileEntity[];
+  
 }

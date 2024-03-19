@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Session,
   UnauthorizedException,
   UsePipes,
@@ -17,6 +18,7 @@ import { CustomerDto } from './dto/customers.dto';
 import { CustomersService } from './customers.service';
 import * as bcrypt from 'bcrypt';
 import { CustomerProfileEntity } from './Entity/customerprofile.entity';
+import { ProductEntity } from './Entity/product.entity';
 
 @Controller('customers')
 export class CustomersController {
@@ -80,19 +82,36 @@ export class CustomersController {
       }
   }
   
-  //5
   @Get('viewProduct')
-  viewProduct() {}
-  //6
+  viewProduct() :any{
+    return this.customersService.getAllProducts();
+  }
+
   @Get('searchProduct')
-  searchProduct() {}
+  async searchProduct(@Query("keyword") keyword: string): Promise<any>{
+    if(!keyword){
+      throw new BadRequestException('Keyword is required');
+    }else{
+      const results = await this.customersService.getProductByKeyWord(keyword);
+      if(results.length > 0){
+        return results;
+      }else{
+        throw new InternalServerErrorException('No product found');
+      }
+    }
+
+  }
   //7
   @Post('order')
   orderProduct() {}
-  //8
+
+  @Post('cart')
+  addProductToCart() {
+  }
+
   @Get('cart')
   viewCart() {}
-  //9
+
   @Delete('cart')
   deleteCartProduct() {}
   //10
