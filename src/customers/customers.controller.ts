@@ -11,6 +11,7 @@ import {
   Query,
   Session,
   UnauthorizedException,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import { CustomersService } from './customers.service';
 import * as bcrypt from 'bcrypt';
 import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 import { ProductEntity } from './Entity/product.entity';
+import { SessionGuard } from 'src/session.guard';
 
 @Controller('customers')
 export class CustomersController {
@@ -48,6 +50,7 @@ export class CustomersController {
 
   @Post('profile')
   @UsePipes(new ValidationPipe())
+  @UseGuards(SessionGuard)
   async createProfile(@Body() CustomerProfileEntity: CustomerProfileEntity, @Session() session: Record<string, any>) {
     if (!session.user) {
       throw new UnauthorizedException('User not found. Login first');
@@ -58,11 +61,13 @@ export class CustomersController {
   }
   
   @Get('profile')
+  @UseGuards(SessionGuard)
   profile(@Session() session:Record<string, any>) {
     return this.customersService.getProfilesById(session.user.user_id);
   }
  
   @Patch('profile')
+  @UseGuards(SessionGuard)
   profileUpdate(@Body() updatedProfile: Partial<CustomerProfileEntity>, @Session() session: Record<string, any>) {
     const profileId = updatedProfile.profile_id;
     if (!profileId) {
@@ -73,6 +78,7 @@ export class CustomersController {
   }
 
   @Delete('profile/:profileId')
+  @UseGuards(SessionGuard)
   async deleteProfile(@Param('profileId') profileId: number): Promise<any> {
      const info = await this.customersService.deleteProfile(profileId);
       if(info.affected){
@@ -83,11 +89,13 @@ export class CustomersController {
   }
   
   @Get('viewProduct')
+  @UseGuards(SessionGuard)
   viewProduct() :any{
     return this.customersService.getAllProducts();
   }
 
   @Get('searchProduct')
+  @UseGuards(SessionGuard)
   async searchProduct(@Query("keyword") keyword: string): Promise<any>{
     if(!keyword){
       throw new BadRequestException('Keyword is required');
