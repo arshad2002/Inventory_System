@@ -1,5 +1,4 @@
-import { AdminEntity } from 'src/Administration/admin.entity';
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne, OneToMany} from 'typeorm';
 
 @Entity("Customer")
 export class CustomerEntity{
@@ -11,11 +10,6 @@ name: string;
 email: string;
 @Column({name: "Password", nullable:false})
 password: string;
-
 @Column({ name:"Phone", nullable:false})
 phone: string;
-
-@ManyToOne(()=>AdminEntity, admin => admin.customers)
-admin: AdminEntity;
-
 }

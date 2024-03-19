@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
+  private blacklistTokens: Set<string> = new Set<string>();
+
   constructor(
     private adminService: AdminService, 
     private jwtService: JwtService
@@ -17,9 +19,9 @@ export class AuthService {
 
   async signIn( logindata:loginDTO): Promise<{ access_token: string }> {
     const user = await this.adminService.findOneBy(logindata);
-   if (!user) {
-    throw new UnauthorizedException('Invalid credentials. Please check your email and password.');
-   }
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials. Please check your email and password.');
+    }
     const isMatch = await bcrypt.compare(logindata.password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');
@@ -28,5 +30,18 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async logout(token: string): Promise<{ access_token: string }> {
+    this.blacklistTokens.add(token);
+  
+    // Generate a new token with an empty payload (or any desired payload)
+    const newToken = await this.jwtService.signAsync({});
+  
+    return { access_token: newToken };
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.blacklistTokens.has(token); // Check if the token is blacklisted
   }
 }

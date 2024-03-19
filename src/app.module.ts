@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModule } from './Administration/admin.module';
 import { AuthModule } from './Administration/auth/auth.module';
+import { MailerModule } from "@nestjs-modules/mailer";
 
 @Module({
   imports: [AdminModule, TypeOrmModule.forRoot(
@@ -15,7 +16,9 @@ import { AuthModule } from './Administration/auth/auth.module';
     database: 'Inventory_Management',
     autoLoadEntities: true,
     synchronize: true,
-    } ),AuthModule, ],
+    }),
+    AuthModule,
+   ],
   controllers: [AppController],
   providers: [AppService],
 })

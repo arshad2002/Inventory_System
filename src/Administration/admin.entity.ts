@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from 'typeorm';
-import { CustomerEntity } from 'src/Customer/customer.entity';
 
-@Entity("admin")
+@Entity("Admin")
 export class AdminEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -27,6 +26,4 @@ export class AdminEntity {
         // this.id = Math.floor(Math.random() * 1000);
     }
 
-    @OneToMany(()=>CustomerEntity, customer => customer.admin)
-    customers: CustomerEntity[];
 }
