@@ -204,7 +204,7 @@ export class CustomersController {
     return this.customersService.sendEmail(mydata);
   }
 
-  //15 signOut session use
+  
   @Get('signout')
   signout(@Session() session) {
     if (session.destroy()) {
