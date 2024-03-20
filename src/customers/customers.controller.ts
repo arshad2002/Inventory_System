@@ -27,6 +27,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 import { CartEntity } from './Entity/cart.entity';
 import { OrderEntity } from './Entity/order.entity';
+import { EmailDto } from './dto/email.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -89,7 +90,6 @@ export class CustomersController {
     } else {
       throw new BadRequestException('Profile picture is required');
     }
-    
   }
 
   @UseGuards(SessionGuard)
@@ -116,8 +116,7 @@ export class CustomersController {
   @UseGuards(SessionGuard)
   @Patch('profile')
   profileUpdate(
-    @Body() updatedProfile: Partial<CustomerProfileEntity>,
-    @Session() session: Record<string, any>,
+    @Body() updatedProfile: Partial<CustomerProfileEntity>
   ) {
     const profileId = updatedProfile.profile_id;
     if (!profileId) {
@@ -159,11 +158,13 @@ export class CustomersController {
     }
   }
 
+  @UseGuards(SessionGuard)
   @Post('order/:pId')
   async placeOrder(@Param("pId") pId: number,@Session() session: Record<string, any>): Promise<OrderEntity> {
     return this.customersService.placeOrder(session.user, pId);
   }
 
+  @UseGuards(SessionGuard)
   @Post('cart')
   createCart(@Session() session: Record<string, any>): Promise<CartEntity> {
     const customerId = session.user.user_id;
@@ -176,6 +177,8 @@ export class CustomersController {
         return cart;
       });
   }
+
+  @UseGuards(SessionGuard)
   @Post('cart/:productId')
   async addToCart(@Param('productId') productId: number, @Session() session: Record<string, any>): Promise<CartEntity> {
     const cartId = session.cartId;
@@ -185,6 +188,7 @@ export class CustomersController {
     return this.customersService.addToCart(cartId, productId);
   }
 
+  @UseGuards(SessionGuard)
   @Get('cart')
   viewCart( @Session() session: Record<string, any>) {
     const cartId = session.cartId;
@@ -194,12 +198,11 @@ export class CustomersController {
     return this.customersService.getCart(cartId);
   }
 
-  //10
-  @Post('shipAddress')
-  shipAddress() {}
-  //12
-  @Post('review')
-  productReview() {}
+
+  @Post('sendEmail')
+  sendEmail(@Body() mydata: EmailDto) {
+    return this.customersService.sendEmail(mydata);
+  }
 
   //15 signOut session use
   @Get('signout')

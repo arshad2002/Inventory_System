@@ -10,10 +10,6 @@ export class CustomerDto {
   email: string;
 
   @IsNotEmpty()
-  @IsString()
-  address: string;
-
-  @IsNotEmpty()
   @IsStrongPassword()
   password: string;
 

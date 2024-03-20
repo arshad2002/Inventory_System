@@ -7,6 +7,8 @@ import { CustomerProfileEntity } from './Entity/customerprofile.entity';
 import { ProductEntity } from './Entity/product.entity';
 import { CartEntity } from './Entity/cart.entity';
 import { OrderEntity } from './Entity/order.entity';
+import { MailerService } from '@nestjs-modules/mailer';
+import { EmailDto } from './dto/email.dto';
 
 
 
@@ -26,7 +28,9 @@ export class CustomersService {
     private readonly cartRepository: Repository<CartEntity>,
     
     @InjectRepository(OrderEntity)
-    private readonly orderRepository: Repository<OrderEntity>
+    private readonly orderRepository: Repository<OrderEntity>,
+
+    private mailerService: MailerService
 
   ) {}
 
@@ -41,6 +45,14 @@ export class CustomersService {
       const hashedPassword = await bcrypt.hash(customerInfo.password, salt);
       customerInfo.password = hashedPassword;
       await this.customerRepository.save(customerInfo);
+
+      const mail = new EmailDto();
+      mail.email = customerInfo.email; 
+      mail.from = 'whatadrag79@gmail.com';
+      mail.subject = 'Welcome to our website';
+      mail.text = 'Thank you for signing up with us';
+      this.sendEmail(mail);
+
       return { "message": "SignUp completed" };
     }
   }
@@ -124,6 +136,16 @@ export class CustomersService {
     order.total_price = totalPrice;
 
     return this.orderRepository.save(order);
+  }
+
+
+  async sendEmail(mydata) {
+    return await this.mailerService.sendMail({
+      to: mydata.email,
+      from: mydata.from,
+      subject: mydata.subject,
+      text: mydata.text,
+    });
   }
 
 }
