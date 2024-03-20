@@ -66,9 +66,11 @@ export class CustomerDTO{
   @MinLength(4)
   password: string;
 
-  @IsString()
-  @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
-  phone: string;
+  // @IsString()
+  // // @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
+  // phone: string;
+
+  filename: string;
 }
 export class CutomerUpdateDTO {
   @IsString()
@@ -114,13 +116,23 @@ export class ProductDTO {
   @IsNumber()
   @IsNotEmpty()
   qty: number;
+
+  filename: string;
+
 }
 
 export class OrderDTO {
-  @IsNotEmpty()
+  @IsNumber()
+  customerId: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductDTO)
+  products: ProductDTO[];
+
+  @IsNumber()
   totalAmount: number;
-  @IsNotEmpty()
-  createdAt: Date;
+
 }
 class ProductOrderDTO {
   @IsNotEmpty()
@@ -129,15 +141,4 @@ class ProductOrderDTO {
   @IsNumber()
   @IsPositive()
   quantity: number;
-}
-
-export class CreateOrderDTO {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ProductOrderDTO)
-  products: ProductOrderDTO[];
-
-  @IsNumber()
-  @IsPositive()
-  totalAmount: number;
 }

@@ -1,21 +1,23 @@
-// import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-// import { CustomerEntity } from './customer.entity';
-// import { OrderProductEntity } from './order-product.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { CustomerEntity } from './customer.entity';
+import { ProductEntity } from './product.entity';
 
-// @Entity('Order')
-// export class OrderEntity {
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@Entity('Order')
+export class OrderEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @ManyToOne(() => CustomerEntity, customer => customer.orders)
-//   customer: CustomerEntity; 
+  @ManyToOne(() => CustomerEntity, customer => customer.orders)
+  customer: CustomerEntity;
 
-//   @OneToMany(() => OrderProductEntity, orderProduct => orderProduct.order)
-//   orderProducts: OrderProductEntity[];
+  @ManyToMany(() => ProductEntity)
+  @JoinTable()
+  products: ProductEntity[];
 
-//   @Column({ type: 'decimal', precision: 10, scale: 2 })
-//   totalAmount: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  totalAmount: number;
 
-//   @CreateDateColumn()
-//   createdAt: Date; 
-// }
+  @Column({ type: 'jsonb', nullable: true }) 
+  productList: { productName: string, quantity: number }[];
+
+}

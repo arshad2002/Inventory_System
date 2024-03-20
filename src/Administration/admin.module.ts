@@ -9,10 +9,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { CustomerEntity } from './entities/customer.entity';
 import { CategoryEntity } from './entities/category.entity';
 import { ProductEntity } from './entities/product.entity';
+import { OrderEntity } from './entities/order.entity';
 
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([AdminEntity, CustomerEntity, CategoryEntity, ProductEntity ]),
+  imports: [ TypeOrmModule.forFeature([AdminEntity, CustomerEntity, CategoryEntity, ProductEntity, OrderEntity ]),
   JwtModule.register({
     global: true,
     secret: "3NP_Backend_Admin",

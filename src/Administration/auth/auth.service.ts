@@ -34,14 +34,12 @@ export class AuthService {
 
   async logout(token: string): Promise<{ access_token: string }> {
     this.blacklistTokens.add(token);
-  
-    // Generate a new token with an empty payload (or any desired payload)
-    const newToken = await this.jwtService.signAsync({});
+      const newToken = await this.jwtService.signAsync({});
   
     return { access_token: newToken };
   }
 
   isTokenBlacklisted(token: string): boolean {
-    return this.blacklistTokens.has(token); // Check if the token is blacklisted
+    return this.blacklistTokens.has(token);
   }
 }

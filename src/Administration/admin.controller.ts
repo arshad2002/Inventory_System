@@ -1,8 +1,7 @@
-import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException, UseGuards, Req, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Delete, Post, ValidationPipe, UsePipes, NotFoundException, UseGuards, Req, UnauthorizedException, HttpException, HttpStatus, UseInterceptors, UploadedFile, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminEntity } from './admin.entity';
-import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO, ProductDTO, CategoryDTO, OrderDTO, CreateOrderDTO } from './admin.dto';
-//import { CustomerEntity } from 'src/Administration/entities/customer.entity';
+import { AdminDTO, AdminUpdateDTO, CustomerDTO, CutomerUpdateDTO, ProductDTO, CategoryDTO, OrderDTO, } from './admin.dto';
 import { AuthGuard } from './auth/auth.gaurd';
 import { Request } from 'express';
 
@@ -11,6 +10,9 @@ import { AuthService } from './auth/auth.service';
 import { CustomerEntity } from './entities/customer.entity';
 import { CategoryEntity } from './entities/category.entity';
 import { ProductEntity } from './entities/product.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
+import { OrderEntity } from './entities/order.entity';
 
 
 @Controller('admin')
@@ -49,8 +51,27 @@ export class AdminController {
 
 //? Customers
   @Post('addcustomer')
+  @UseInterceptors(FileInterceptor('myfile',
+        {
+            fileFilter: (req, file, cb) => {
+                if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+                    cb(null, true);
+                else {
+                    cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+                }
+            },
+            limits: { fileSize: 300000 },
+            storage: diskStorage({
+                destination: './upload',
+                filename: function (req, file, cb) {
+                    cb(null, Date.now() + file.originalname)
+                },
+            })
+        }
+    ))
   @UsePipes(new ValidationPipe())
-  async createCustomer(@Body() customerDTO: CustomerDTO): Promise<CustomerEntity> {
+  async createCustomer(@Body() customerDTO: CustomerDTO, @UploadedFile() myfile: Express.Multer.File): Promise<CustomerEntity> {
+    customerDTO.filename = myfile.fieldname;
     return await this.adminService.createCustomer(customerDTO);
   }
 
@@ -166,36 +187,44 @@ getProductsById(@Param('id') id: number): object{
 
 //? Orders
 
-// @Get('allorders')
-// async getAllOrders(): Promise<OrderEntity[]> {
-//   return await this.adminService.getAllOrders();
-// }
-// @Post('customers/:id/addorder')
-//   async createOrder(@Param('id') id: number): Promise<any> {
-//     try {
-//       const order = await this.adminService.createOrder(id);
-//       return { success: true, order };
-//     } catch (error) {
-//       if (error instanceof NotFoundException) {
-//         throw new NotFoundException(error.message);
-//       }
-//       throw error;
-//     }
-//   }
+@Post('customers/:id/addorder')
+async placeOrder(@Param('id') id: number, @Body() orderDTO: OrderDTO): Promise<OrderEntity> {
+  try {
+    return await this.adminService.placeOrder(id, orderDTO);
+  } catch (error) {
+    if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      throw error;
+    }
+    throw new BadRequestException('Failed to place order');
+  }
+}
 
-// @Post('customers/:id/addorder')
-// @UsePipes(new ValidationPipe())
-//   async createOrder(@Param('id') customerId: number, @Body() orderDTO: CreateOrderDTO) {
-//     try {
-//       const order = await this.adminService.createOrder(customerId, orderDTO);
-//       return order;
-//     } catch (error) {
-//       throw new UnauthorizedException(error.message);
-//     }
-//   }
+@Get('customer/:id/orders')
+  async getOrdersByCustomerId(@Param('id') id: number): Promise<OrderEntity[]> {
+    try {
+      const orders = await this.adminService.getOrdersByCustomerId(id);
+      return orders;this.adminService
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new InternalServerErrorException('An error occurred while fetching orders');
+      }
+    }
+  }
 
-
-
+  @Delete('customer/:id/order/:id')
+  async deleteOrder(@Param('id') id: number): Promise<void> {
+    try {
+      await this.adminService.deleteOrder(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new InternalServerErrorException('An error occurred while deleting the order');
+      }
+    }
+  }
 
 }
 

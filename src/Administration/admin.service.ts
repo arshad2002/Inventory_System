@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
-import { AdminDTO, AdminUpdateDTO, CategoryDTO, CreateOrderDTO, CustomerDTO, CutomerUpdateDTO, OrderDTO, ProductDTO, loginDTO } from './admin.dto';
+import { AdminDTO, AdminUpdateDTO, CategoryDTO, CustomerDTO, CutomerUpdateDTO, OrderDTO, ProductDTO, loginDTO } from './admin.dto';
 //import { CustomerEntity } from 'src/Administration/entities/customer.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +10,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { CustomerEntity } from './entities/customer.entity';
 import { CategoryEntity } from './entities/category.entity';
 import { ProductEntity } from './entities/product.entity';
+import { OrderEntity } from './entities/order.entity';
 
 @Injectable()
 export class AdminService {
@@ -24,6 +25,8 @@ export class AdminService {
     @InjectRepository(CustomerEntity) private customerRepository: Repository<CustomerEntity>,
     @InjectRepository(CategoryEntity) private categoryRepository: Repository<CategoryEntity>,
     @InjectRepository(ProductEntity) private productRepository: Repository<ProductEntity>,
+    @InjectRepository(OrderEntity) private orderRepository: Repository<OrderEntity>,
+
 
 
     private mailerService: MailerService,
@@ -90,8 +93,10 @@ export class AdminService {
 async createCustomer(customerDTO: CustomerDTO): Promise<CustomerEntity> {
   const customer = new CustomerEntity();
   customer.name = customerDTO.name;
-  customer.phone = customerDTO.phone;
+  // customer.phone = customerDTO.phone;
   customer.email =customerDTO.email;
+  customer.filename =customerDTO.filename;
+
 
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(customerDTO.password, salt);
@@ -232,69 +237,74 @@ async deleteProductById(id: number): Promise<string> {
     }
 
 
-
-
-
-
-
 //? Orders
 
-// async createOrder(orderDTO: CreateOrderDTO): Promise<OrderEntity> {
-//   const order = new OrderEntity();
-//   order.totalAmount = orderDTO.totalAmount;
-//   order.createdAt = orderDTO.createdAt;
+async placeOrder(id: number, orderDTO: OrderDTO): Promise<OrderEntity> {
+  // Find the customer by ID
+  const customer = await this.customerRepository.findOneBy({ id });
+  if (!customer) {
+    throw new NotFoundException('Customer not found');
+  }
 
-//   // Fetch the customer entity by ID
-//   const customer = await this.customerRepository.findOneBy(orderDTO.id);
-//   if (!customer) {
-//     throw new Error(`Customer with ID ${orderDTO.id} not found`);
-//   }
-//   order.customer = customer;
-
-//   const products = await Promise.all(orderDTO.products.map(async productOrder => {
-//     const product = await this.productRepository.findOneBy({ name: productOrder.productName });
-//     if (!product) {
-//       throw new Error(`Product with name ${productOrder.productName} not found`);
-//     }
-//     return { ...product, quantity: productOrder.quantity };
-//   }));
-
-//   order.products = products;
-
-//   return await this.orderRepository.save(order);
-// }
-
-
-
-
-
-// async getAllOrders(): Promise<OrderEntity[]> {
-//   return await this.orderRepository.find();
-// }
-// async createOrder(id: number): Promise<OrderEntity> {
-//   // Find the customer by ID
-//   const customer = await this.customerRepository.findOneBy({id});
+  // Initialize variables
+  let totalAmount = 0;
+  const products: ProductEntity[] = [];
   
-//   if (!customer) {
-//     throw new NotFoundException('Customer not found');
-//   }
-//     const order = new OrderEntity();
-//   order.customer = customer;
-//     return await this.orderRepository.save(order);
-// }
-// async createOrder(orderDTO: OrderDTO, id: number): Promise<OrderEntity> {
-//   const customer = await this.customerRepository.findOneBy({id});
-//       if (!customer) {
-//     throw new NotFoundException('Customer not found');
-//   }
-//   const order = new OrderEntity();
-//   order.totalAmount = orderDTO.totalAmount;
-//   order.createdAt = orderDTO.createdAt;
-//   order.customer = customer;
+  // Validate products and calculate total amount
+  for (const productDTO of orderDTO.products) {
+    // Find the product by name
+    const product = await this.productRepository.findOneBy({ name: productDTO.name });
+    if (!product) {
+      throw new NotFoundException(`Product ${productDTO.name} not found`);
+    }
 
+    // Validate product quantity
+    if (product.qty < productDTO.qty) {
+      throw new BadRequestException(`Insufficient quantity for product ${productDTO.name}`);
+    }
 
-//   return await this.orderRepository.save(order);
-// }
+    // Calculate total amount for the product
+    totalAmount += product.sellprice * productDTO.qty;
+
+    // Reduce product quantity in stock
+    product.qty -= productDTO.qty;
+    products.push(product);
+  }
+
+  // Create order entity
+  const order = new OrderEntity();
+  order.customer = customer;
+  order.products = products;
+  order.totalAmount = totalAmount;
+
+  // Save order and update product quantities
+  const savedOrder = await this.orderRepository.save(order);
+  await Promise.all(products.map(product => this.productRepository.save(product)));
+
+  return savedOrder;
+}
+
+async getOrdersByCustomerId(customerId: number): Promise<OrderEntity[]> {
+  const orders = await this.orderRepository.find({
+    where: { customer: { id: customerId } },
+    relations: ['customer', 'products'], // Include related entities if needed
+  });
+
+  if (!orders || orders.length === 0) {
+    throw new NotFoundException('No orders found for the customer');
+  }
+
+  return orders;
+}
+
+async deleteOrder(id: number): Promise<string> {
+  const order = await this.orderRepository.findOneBy({id});
+  if (!order) {
+    throw new NotFoundException('Order not found');
+  }
+  await this.orderRepository.remove(order);
+  return `Order with ID ${id} has been deleted successfully`;
+}
 
 
 }
