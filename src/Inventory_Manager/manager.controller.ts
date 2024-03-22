@@ -62,7 +62,7 @@ export class ManagerController {
 
   @Get('/getfile/:name')
 getImages(@Param('name') name, @Res() res) {
-res.sendFile(name,{ root: './uploadedFiles' })
+res.sendFile(name,{ root: './ManagerFiles' })
 }
 
 
@@ -102,15 +102,8 @@ res.sendFile(name,{ root: './uploadedFiles' })
 
 
   
-//   @Get()
-//   async getAllUsers(): Promise<ManagerDTO[]> {
-//     return this.appService.getAllUsers();
-//   }
-//   @Get(':id')
-//   async getUserById(@Param('id') id: number): Promise<ManagerDTO> {
-//     return this.appService.getUserById(id);
-//   }
-  @Put(':id')
+
+  @Put('product/:id')
   @UsePipes(new ValidationPipe)
   async updateProductById(@Param('id') id: number, @Body() updateProduct: ManagerDTO): Promise<ManagerDTO> {
     return this.appService.updateProductById(id, updateProduct);

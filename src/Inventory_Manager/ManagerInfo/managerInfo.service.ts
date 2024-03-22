@@ -30,7 +30,7 @@ export class ManagerService {
     const admin = new ManagerEntity();
     admin.name = adminDTO.name;
     admin.phone = adminDTO.phone;
-    admin.isActive = adminDTO.isActive;
+    // admin.isActive = adminDTO.isActive;
     admin.email =adminDTO.email;
     admin.password =adminDTO.password;
 

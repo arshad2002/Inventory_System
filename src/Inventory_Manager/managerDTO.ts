@@ -4,7 +4,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable prettier/prettier */
-import { IsNumber, IsString, Length, Matches,IsEmail, isNotEmpty, IsNotEmpty } from "class-validator";
+import { IsNumber, IsString, Length, Matches,IsEmail, isNotEmpty, IsNotEmpty, IsInt } from "class-validator";
 
 
 
@@ -15,11 +15,13 @@ export class ManagerDTO {
     
     @Length(0, 100)
     Product_name: string;
-    //age
     
     
+    @IsInt()
     Supplier_id : number;
+    @IsInt()
     Unit_price : number;
+    @IsInt()
     StockQuantity : number
     
     

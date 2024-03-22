@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 import { IsString, IsBoolean, IsEmail, Matches, IsOptional, MinLength, IsNotEmpty } from 'class-validator';
 
 export class ManagerDTO {
@@ -18,9 +20,7 @@ export class ManagerDTO {
     @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
     phone: string;
 
-    @IsBoolean()
-    @IsOptional()
-    isActive: boolean;
+    
 }
 
 export class loginDTO {

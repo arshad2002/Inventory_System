@@ -29,7 +29,7 @@ export class ManagerService {
 
   async getProductByName(): Promise<ProductEntity[]> {
     return await this.productRepo.find({
-      where : {Product_name:"saree"}
+      where : {Product_name:"Tshirt"}
     });
   }
 
