@@ -66,9 +66,9 @@ export class CustomerDTO{
   @MinLength(4)
   password: string;
 
-  // @IsString()
-  // // @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
-  // phone: string;
+  @IsString()
+  @Matches(/^01\d{9}$/, { message: 'Phone number must start with 01 and be 11 digits long' })
+  phone: string;
 
   filename: string;
 }

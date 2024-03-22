@@ -93,7 +93,7 @@ export class AdminService {
 async createCustomer(customerDTO: CustomerDTO): Promise<CustomerEntity> {
   const customer = new CustomerEntity();
   customer.name = customerDTO.name;
-  // customer.phone = customerDTO.phone;
+  customer.phone = customerDTO.phone;
   customer.email =customerDTO.email;
   customer.filename =customerDTO.filename;
 

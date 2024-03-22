@@ -17,9 +17,7 @@ import { OrderEntity } from './entities/order.entity';
 
 @Controller('admin')
 @UseGuards(AuthGuard)
-//@UseGuards(SessionGuard)
 export class AdminController {
-  //authService: any;
   constructor(
     private readonly adminService: AdminService,
     private readonly authService: AuthService, // Inject AuthService here
@@ -60,7 +58,7 @@ export class AdminController {
                     cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
                 }
             },
-            limits: { fileSize: 300000 },
+            limits: { fileSize: 2000000 },
             storage: diskStorage({
                 destination: './upload',
                 filename: function (req, file, cb) {
@@ -187,7 +185,7 @@ getProductsById(@Param('id') id: number): object{
 
 //? Orders
 
-@Post('customers/:id/addorder')
+@Post('customer/:id/addorder')
 async placeOrder(@Param('id') id: number, @Body() orderDTO: OrderDTO): Promise<OrderEntity> {
   try {
     return await this.adminService.placeOrder(id, orderDTO);
