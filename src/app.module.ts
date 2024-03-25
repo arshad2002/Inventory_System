@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './Administration/admin.module';
 import { CustomersModule } from './customers/customers.module';
+import { AuthModule } from './Administration/auth/auth.module';
+import { MailerModule } from "@nestjs-modules/mailer";
 
 @Module({
-  imports: [CustomersModule,TypeOrmModule.forRoot({
+  imports: [AdminModule,CustomersModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
