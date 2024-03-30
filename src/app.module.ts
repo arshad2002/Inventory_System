@@ -1,20 +1,20 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ManagerModule } from './Inventory_Manager/manager.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoryModule } from './Inventory_Manager/Category/category.module';
+import { AdminModule } from './Administration/admin.module';
 import { CustomersModule } from './customers/customers.module';
+import { AuthModule } from './Administration/auth/auth.module';
+import { MailerModule } from "@nestjs-modules/mailer";
 
 @Module({
-  imports: [CustomersModule,ManagerModule,CategoryModule,TypeOrmModule.forRoot({
+  imports: [AdminModule,CustomersModule,TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
     username: 'postgres',
     password: '1234',
-    database: 'inventory',//Change to your database name
+    database: 'inventory_managment',
     autoLoadEntities: true,
     synchronize: true,
   })],
